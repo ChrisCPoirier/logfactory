@@ -1,0 +1,4 @@
+# Needed to run the tests
+# Run "pip install -r requirements.txt"
+pytest
+psutil

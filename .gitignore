@@ -1,0 +1,4 @@
+# Generated when running filterfactory
+*.pyc
+/build/
+/.idea/

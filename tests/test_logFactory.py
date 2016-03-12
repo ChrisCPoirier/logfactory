@@ -1,5 +1,5 @@
 import unittest
-import logfactory
+from logfactory import LogFactory
 import time
 
 
@@ -14,19 +14,25 @@ class TestLogFactory(unittest.TestCase):
 
 	def test_simple_log_cache_count(self):
 		cur_time = time.time()
-		logger = logfactory.LogFactory('/tmp/test1.log')
+		logger = LogFactory('/tmp/test1.log')
 		logger.log('test logging ' + str(cur_time))
 		logger.log('test logging ' + str(cur_time))
 		logger.log('test logging 2')
 		self.assertEqual(len(logger.messageCache), 2)
 
 	def test_simple_cache_length(self):
-		logger = logfactory.LogFactory('/tmp/test2.log')
+		logger = LogFactory('/tmp/test2.log')
 		logger.lagTime = .01
 		for i in xrange(0,11):
 			logger.log('test logging' + str(i))
 
 		self.assertEqual(len(logger.messageCache), 11)
+
+	def test_simple_wrong_log_type(self):
+		try:
+			log = LogFactory('/tmp/test2.log', 'xfile')
+		except Exception as e:
+			self.assertEqual('Unexpected exception thrown:', e.message)
 
 if __name__ == '__main__':
 	suite = unittest.TestLoader().loadTestsFromTestCase(TestLogFactory)

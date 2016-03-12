@@ -61,7 +61,6 @@ class LogFactory(object):
 		if not record or cur_time - record > self.lagTime:
 			self.writer.write(time.strftime('%Y-%m-%d %H:%M:%S') + " " + message)
 			self.messageCache[message_key] = cur_time
-
 			self.logCounter += 1
 			if self.logCounter > self.cleanRatio:
 				self.clean()
@@ -97,8 +96,10 @@ class LogFactory(object):
 			return self.WebWriter(self.location)
 		elif self.log_type == 'file':
 			return self.FileWriter(self.location)
+		elif self.log_type == 'memory':
+			return self.MemoryWriter(self.location)
 		else:
-			raise Exception("log type of " + self.log_type + " not supported!!!")
+			raise ValueError("log type of " + self.log_type + " not supported!!!")
 
 	class FileWriter:
 		"""This is designed to write messages to a file.
@@ -141,4 +142,22 @@ class LogFactory(object):
 				"\nYour message is " + message + "\nYour url is " + self.urlLocation
 			pass
 
+	class MemoryWriter:
+		"""This is designed to write messages to memory.
+		"""
+		def __init__(self):
+			self.log = []
+			self.logSize = 1000
 
+		def write(self, message):
+			if len(self.log) == self.logSize:
+				# TODO: review speed
+				self.log.pop(0)
+
+			self.log.append(message)
+
+		def read(self):
+			return self.log
+
+		def delete(self):
+			self.log = []
